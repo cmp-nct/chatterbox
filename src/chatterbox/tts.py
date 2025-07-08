@@ -104,7 +104,7 @@ class Conditionals:
         return cls(T3Cond(**kwargs['t3']), kwargs['gen'])
 
 
-class KartoffelboxTTS:
+class ChatterboxTTS:
     ENC_COND_LEN = 6 * S3_SR
     DEC_COND_LEN = 10 * S3GEN_SR
 
@@ -127,7 +127,7 @@ class KartoffelboxTTS:
         self.watermarker = perth.PerthImplicitWatermarker()
 
     @classmethod
-    def from_local(cls, ckpt_dir, device) -> 'KartoffelboxTTS':
+    def from_local(cls, ckpt_dir, device) -> 'ChatterboxTTS':
         ckpt_dir = Path(ckpt_dir)
 
         # Always load to CPU first for non-CUDA devices to handle CUDA-saved models
@@ -166,7 +166,7 @@ class KartoffelboxTTS:
         return cls(t3, s3gen, ve, tokenizer, device, conds=conds)
 
     @classmethod
-    def from_pretrained(cls, device) -> 'KartoffelboxTTS':
+    def from_pretrained(cls, device) -> 'ChatterboxTTS':
         # Check if MPS is available on macOS
         if device == "mps" and not torch.backends.mps.is_available():
             if not torch.backends.mps.is_built():
@@ -177,6 +177,7 @@ class KartoffelboxTTS:
 
         for fpath in ["ve.safetensors", "t3_cfg.safetensors", "s3gen.safetensors", "tokenizer.json", "conds.pt"]:
             local_path = hf_hub_download(repo_id=REPO_ID, filename=fpath)
+            print(f"Local path :{local_path}")
 
         return cls.from_local(Path(local_path).parent, device)
 
